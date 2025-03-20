@@ -1,15 +1,21 @@
-:: Prevents commands being displayed in the command prompt
+:: Prevents commands from being displayed in the command prompt
 @echo off
 
-:: Check if the build folder / directory exists, otherwise it creates it
+:: Check if the build folder exists, otherwise create it
 if not exist build mkdir build
 
-:: pushd is kinda like cd, so this cd's us into the build folder
+:: Change directory to the build folder
 pushd build
 
-:: Runs the microsoft compiler cl.exe to compile the main.cpp file
-:: Which is outside of the build folder hence why the ../
-cl ../main.cpp
+:: Check if a number was provided as an argument, otherwise default to 8
+if "%1"=="" (
+  set NUMBER=8
+) else (
+  set NUMBER=%1
+)
 
-:: Returns us out of the build folder
-popd build
+:: Compile with NUMBER defined
+cl /DNUMBER=%NUMBER% ../main.cpp /Fe:main.exe
+
+:: Return to the previous directory
+popd
