@@ -5,5 +5,5 @@ If NUMBER is not equal to 8 or 16,  an error message shall be generated and comp
 The macro shall be defined when you compile the program.
 
 # Notes
-Set the macro as a integer with this
-cl /DNUMBER=8 main.cpp /Fe:build/main.exe
+Set the macro NUMBER with
+build.bat 8 
