@@ -1,0 +1,3 @@
+# Description
+1. Read a lowercase letter from terminal and convert it to uppercase and then print the converted letter to the terminal.
+2. Generate two random numbers and print them to the terminal.
