@@ -1,0 +1,7 @@
+# Description
+Make a program to get a string from the standard input, then print the string to the output in the reversed order.
+Don’t use a standard function. Implement the algorithm by yourself.
+
+For examaple:
+  Enter a string: ABCDEF
+  Reversed string: FEDCBA
