@@ -1,5 +1,5 @@
-CMakeFiles/example.dir/main.cpp.obj: \
- C:\Users\Lucas\Desktop\cpp\Course\exercise_13\main.cpp \
+CMakeFiles/main.dir/main.cpp.obj: \
+ C:\Users\Lucas\Desktop\cpp\Course\week_15\exercise_13\main.cpp \
  C:/MinGW/include/c++/14.2.0/iostream \
  C:/MinGW/include/c++/14.2.0/bits/requires_hosted.h \
  C:/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++config.h \
