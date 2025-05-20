@@ -14,7 +14,7 @@ add_executable(main
 
 target_compile_options(main PRIVATE -Wall -Wextra)
 
-target_include_directories(main PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_include_directories(main PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 if(WIN32)
   target_link_options(main PRIVATE -static -static-libgcc -static-libstdc++)
