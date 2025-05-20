@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-set(PROJECT_NAME exercise_14)
+set(PROJECT_NAME assignment_1)
 
 project(
   ${PROJECT_NAME} 
