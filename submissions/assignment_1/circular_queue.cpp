@@ -1,20 +1,5 @@
-#include <iostream>
-#include <stddef.h>
-#include <stdlib.h>
+#include "circular_queue.h"
 #include <cassert>
-
-struct Node {
-  int data;
-  Node* next;
-};
-
-struct CircularQueue {
-  Node* old_data;     
-  Node* new_data;    
-  size_t size; 
-  size_t count;
-  Node* head;  
-};
 
 CircularQueue* createQueue(size_t size) {
   if (size <= 3) return NULL;
@@ -28,9 +13,9 @@ CircularQueue* createQueue(size_t size) {
     free(q);
     return NULL;
   }
-  
+
   Node* current = firstNode;
-  
+
   // create remaining nodes
   for (size_t i = 1; i < size; i++) {
     Node* newNode = (Node*)malloc(sizeof(Node));
@@ -38,27 +23,24 @@ CircularQueue* createQueue(size_t size) {
       // cleans up already alocated nodes
       Node* temp = firstNode;
       Node* next;
-      
       while (temp) {
         next = temp->next;
         free(temp);
         temp = next;
         if (temp == firstNode) break;
       }
-      
       free(q);
       return NULL;
     }
-    
     current->next = newNode;
     current = newNode;
   }
-  
+
   current->next = firstNode;
-  
+
   q->size = size;
   q->count = 0;
-  q->head = firstNode; 
+  q->head = firstNode;
   q->old_data = q->new_data = NULL;
 
   return q;
@@ -74,19 +56,18 @@ void destroyQueue(CircularQueue* q) {
   if (!q) return;
 
   emptyQueue(q);
-  
+
   if (q->head) {
     Node* current = q->head;
     Node* start = current;
     Node* next;
-    
     do {
       next = current->next;
       free(current);
       current = next;
     } while (current != start);
   }
-  
+
   free(q);
 }
 
@@ -95,7 +76,7 @@ int writeToQueue(CircularQueue* q, int value) {
 
   // if empty use the first alocated node
   if (q->count == 0) {
-    q->old_data = q->new_data = q->head;   
+    q->old_data = q->new_data = q->head;
     q->old_data->data = value;
     q->count++;
     return 1;
@@ -141,55 +122,71 @@ int isQueueFull(const CircularQueue* q) {
 
 int resizeQueue(CircularQueue* q, size_t newSize) {
   if (!q || newSize <= 3) return 0;
-  
-  while (q->count > newSize) {
-    int tmp;
-    readFromQueue(q, &tmp);
+
+  if (newSize == q->size) return 1;
+
+  int* tempData = (int*)malloc(sizeof(int) * (newSize));
+  if (!tempData) return 0;
+
+  size_t itemsToCopy = (q->count < newSize) ? q->count : newSize;
+
+  int val;
+
+  size_t toSkip = q->count - itemsToCopy;
+  for (size_t i = 0; i < toSkip; ++i) {
+    readFromQueue(q, &val); 
   }
 
+  for (size_t i = 0; i < itemsToCopy; ++i) {
+    readFromQueue(q, &tempData[i]);
+  }
+
+  if (q->head) {
+    Node* current = q->head;
+    Node* start = current;
+    Node* next;
+    do {
+      next = current->next;
+      free(current);
+      current = next;
+    } while (current != start);
+  }
+
+  Node* firstNode = (Node*)malloc(sizeof(Node));
+  if (!firstNode) {
+    free(tempData);
+    return 0;
+  }
+  Node* current = firstNode;
+  for (size_t i = 1; i < newSize; i++) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (!newNode) {
+      // clean up
+      Node* temp = firstNode;
+      Node* next;
+      do {
+        next = temp->next;
+        free(temp);
+        temp = next;
+      } while (temp && temp != firstNode);
+      free(tempData);
+      return 0;
+    }
+    current->next = newNode;
+    current = newNode;
+  }
+  current->next = firstNode;
+
+  // write stored data into new queue
+  q->head = firstNode;
   q->size = newSize;
+  q->count = 0;
+  q->old_data = q->new_data = NULL;
+
+  for (size_t i = 0; i < itemsToCopy; i++) {
+    writeToQueue(q, tempData[i]);
+  }
+
+  free(tempData);
   return 1;
-}
-
-int main() {
-  // create queue
-  CircularQueue* q = createQueue(5);
-  assert(q != NULL);
-  
-  // count queue
-  assert(countQueue(q) == 0);
-
-  // write to queue
-  assert(writeToQueue(q, 10));
-  assert(writeToQueue(q, 20));
-  assert(writeToQueue(q, 30));
-  assert(countQueue(q) == 3);
-
-  // read from queue
-  int val;
-  assert(readFromQueue(q, &val));
-  assert(val == 10);
-  assert(countQueue(q) == 2);
-
-  // queue overflow  
-  assert(writeToQueue(q, 40));
-  assert(writeToQueue(q, 50));
-  assert(writeToQueue(q, 60));
-  assert(writeToQueue(q, 70));
-  assert(countQueue(q) == 5);
-
-  // if queue is full
-  assert(isQueueFull(q));
-
-  // resize queue
-  assert(resizeQueue(q, 4));
-  assert(countQueue(q) == 4);
-
-  // empty queue 
-  emptyQueue(q);
-  assert(countQueue(q) == 0);
-
-  destroyQueue(q);  
-  std::cout << "Tests passed" << std::endl;
-  return 0;
 }
